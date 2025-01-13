@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>因基玄微</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0 0 60px 0;
+            background-color: #FFF8DC; /* 浅黄色背景 */
+            color: #333;
+            min-height: 100vh;
+            position: relative;
+        }
+        header {
+            background-color: #FFF8DC; /* 浅黄色背景 */
+            color: #8B4513; /* 深棕色文字 */
+            padding: 1px 5px;
+            text-align: center;
+            width: 100%;
+            box-sizing: border-box;
+            border-bottom: 2px solid #8B4513; /* 深棕色边框 */
+        }
+        main {
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: rgba(255, 248, 220, 0.9); /* 浅黄色背景，带透明度 */
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .input-box {
+            background: rgba(255, 248, 220, 0.9); /* 浅黄色背景，带透明度 */
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            border: 1px solid #8B4513; /* 深棕色边框 */
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 10px 5px;
+            background-color: #8B4513; /* 深棕色 */
+            color: #FFF8DC; /* 浅黄色文字 */
+            text-decoration: none;
+            border-radius: 5px;
+            cursor: pointer;
+            border: none;
+            transition: background-color 0.3s;
+        }
+        .button:hover {
+            background-color: #B87333; /* 古铜色 */
+        }
+        footer {
+            text-align: center;
+            padding: 15px;
+            background-color: #FFF8DC; /* 浅黄色背景 */
+            color: #8B4513; /* 深棕色文字 */
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            box-sizing: border-box;
+            border-top: 2px solid #8B4513; /* 深棕色边框 */
+        }
+        .result-box {
+            background: rgba(255, 248, 220, 0.9); /* 浅黄色背景，带透明度 */
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 0.9em;
+            color: #555;
+            margin-top: 20px;
+            border: 1px solid #8B4513; /* 深棕色边框 */
+        }
+        .result-box h3 {
+            margin-top: 0;
+            color: #8B4513; /* 深棕色 */
+            border-bottom: 2px solid #8B4513; /* 深棕色边框 */
+            padding-bottom: 5px;
+        }
+        .markdown-content {
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+        .markdown-content h1 {
+            font-size: 1.4em;
+            color: #8B4513; /* 深棕色 */
+            border-bottom: 2px solid #8B4513; /* 深棕色边框 */
+            padding-bottom: 0.3em;
+        }
+        .markdown-content h2 {
+            font-size: 1.2em;
+            color: #8B4513; /* 深棕色 */
+            margin-top: 1.2em;
+        }
+        .markdown-content p {
+            line-height: 1.6;
+            margin: 1em 0;
+        }
+        .markdown-content ul, .markdown-content ol {
+            padding-left: 2em;
+            margin: 1em 0;
+        }
+        /* 旋转八卦图样式 */
+        .loading-spinner {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+        }
+        .bagua {
+            width: 80px;
+            height: 80px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="black"/><circle cx="50" cy="25" r="25" fill="white"/><circle cx="50" cy="75" r="25" fill="black"/><circle cx="50" cy="25" r="10" fill="black"/><circle cx="50" cy="75" r="10" fill="white"/></svg>');
+            background-size: cover;
+            animation: spin 2s linear infinite;
+        }
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
+</head>
+<body>
+    <header>
+        <h1>因基玄微</h1>
+    </header>
+    <main>
+        <div class="input-box">
+            <h2>请输入您的生辰八字：</h2>
+            <form id="bazi-form">
+                <label for="bazi">八字：</label>
+                <input type="text" id="bazi" name="bazi" placeholder="例如：甲子乙丑丙寅丁卯" required style="width: 100%; padding: 8px; margin-top: 10px; margin-bottom: 20px;">
+                <button type="button" class="button" onclick="calculateBazi()">提交</button>
+            </form>
+        </div>
+        <div class="result-box" id="result-box" style="display: none;">
+            <h3>测算结果：</h3>
+            <div id="result" class="markdown-content"></div>
+        </div>
+        <!-- 加载动画 -->
+        <div class="loading-spinner" id="loading-spinner" style="display: none;">
+            <div class="bagua"></div>
+        </div>
+    </main>
+    <footer>
+        &copy; 2025 因基玄微保留所有权利。
+    </footer>
+
+    <script>
+        marked.setOptions({
+            breaks: true,
+            gfm: true
+        });
+
+        async function calculateBazi() {
+            const baziInput = document.getElementById('bazi').value.trim();
+
+            if (!baziInput) {
+                alert('请输入有效的生辰八字！');
+                return;
+            }
+
+            const resultBox = document.getElementById('result-box');
+            const resultElement = document.getElementById('result');
+            const loadingSpinner = document.getElementById('loading-spinner');
+
+            // 显示加载动画
+            resultElement.innerHTML = '';
+            resultBox.style.display = 'block';
+            loadingSpinner.style.display = 'flex';
+
+            const apiKey = 'sk-7b904305eb6c413eb04a3bfb0ae5805d';
+            const baseUrl = 'https://api.deepseek.com';
+
+            try {
+                const prompt = `请对以下八字进行测算，并给出详细分析：\n八字：${baziInput}`;
+
+                const messages = [{ role: "user", content: prompt }];
+
+                const response = await fetch(`${baseUrl}/v1/chat/completions`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify({
+                        model: 'deepseek-chat',
+                        messages: messages
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`DeepSeek API 返回错误状态码：${response.status}`);
+                }
+
+                const data = await response.json();
+                const result = data.choices[0].message.content.trim();
+
+                // 隐藏加载动画，显示结果
+                loadingSpinner.style.display = 'none';
+                resultElement.innerHTML = marked.parse(result);
+            } catch (error) {
+                // 隐藏加载动画，显示错误信息
+                loadingSpinner.style.display = 'none';
+                resultElement.innerHTML = `测算失败：${error.message}`;
+            }
+        }
+    </script>
+</body>
+</html>
