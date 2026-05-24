@@ -9,7 +9,7 @@
 // ---------------------------------------------------------------------------
 // Configuration — change this when you deploy to a real server
 // ---------------------------------------------------------------------------
-export const BACKEND_URL = 'http://localhost:3001';
+export const BACKEND_URL = 'https://have-a-nice-day-7w5t.onrender.com';
 
 // ---------------------------------------------------------------------------
 // Calculate BaZi pillars from birth data
