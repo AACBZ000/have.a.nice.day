@@ -73,35 +73,24 @@ router.post('/interpret', async (req, res) => {
 
     const { year, month, day, hour } = pillars;
 
-    const prompt = `You are a master of BaZi (Four Pillars of Destiny), the ancient Chinese art of destiny reading.
-Analyze the following birth chart for ${name} (${gender || 'Unknown gender'}):
+    const prompt = `你是一位精通八字命理的大师，擅长四柱八字的推算与解读。
+请为${name}（${gender === 'Male' ? '男' : gender === 'Female' ? '女' : gender || '未知'}）分析以下八字命盘：
 
-Year Pillar:  ${year.stem.english} / ${year.stem.chinese} (${year.stem.element}, ${year.stem.polarity}) — ${year.branch.chinese} ${year.branch.english} (${year.branch.element})
-Month Pillar: ${month.stem.english} / ${month.stem.chinese} (${month.stem.element}, ${month.stem.polarity}) — ${month.branch.chinese} ${month.branch.english} (${month.branch.element})
-Day Pillar:   ${day.stem.english} / ${day.stem.chinese} (${day.stem.element}, ${day.stem.polarity}) — ${day.branch.chinese} ${day.branch.english} (${day.branch.element})
-Hour Pillar:  ${hour.stem.english} / ${hour.stem.chinese} (${hour.stem.element}, ${hour.stem.polarity}) — ${hour.branch.chinese} ${hour.branch.english} (${hour.branch.element})
+年柱：${year.stem.english}（${year.stem.element}）- ${year.branch.english}（${year.branch.element}）
+月柱：${month.stem.english}（${month.stem.element}）- ${month.branch.english}（${month.branch.element}）
+日柱：${day.stem.english}（${day.stem.element}）- ${day.branch.english}（${day.branch.element}）
+时柱：${hour.stem.english}（${hour.stem.element}）- ${hour.branch.english}（${hour.branch.element}）
 
-Provide a comprehensive reading in English covering:
+请用中文进行详细解读，涵盖以下六个方面：
 
-## Overall Destiny & Life Theme
-Their core life purpose and energy — what this chart says about their overall destiny.
+## 命局总论
+## 性格特质
+## 事业财运
+## 感情婚姻
+## 健康养生
+## 用神喜忌
 
-## Personality & Character
-Key personality traits, strengths, and tendencies revealed by the chart.
-
-## Career & Wealth
-Best career paths, industries, and financial destiny.
-
-## Love & Relationships
-Romantic compatibility, relationship patterns, and what they need in a partner.
-
-## Health & Vitality
-Health tendencies, areas to watch, and how to maintain balance.
-
-## Lucky Elements & Colors
-Their favorable elements, colors, directions, and numbers.
-
-Write in an engaging, insightful, and personal tone. Be specific to their chart. Write 3-4 sentences per section. Address ${name} directly where appropriate.`;
+语言生动，富有洞察力，每个方面写3-4句话，直接称呼${name}。`;
 
     // Set up SSE headers
     res.setHeader('Content-Type', 'text/event-stream');
@@ -191,6 +180,147 @@ Write in an engaging, insightful, and personal tone. Be specific to their chart.
     console.error('[/interpret] Error:', err);
     if (!res.headersSent) {
       res.status(500).json({ error: 'Internal server error during AI interpretation.' });
+    } else {
+      res.write(`data: ${JSON.stringify({ error: 'Internal server error.' })}\n\n`);
+      res.end();
+    }
+  }
+});
+
+/**
+ * POST /api/bazi/match
+ * Calls DeepSeek API with SSE streaming to generate a compatibility analysis.
+ *
+ * Body: { personA: { name, gender, pillars }, personB: { name, gender, pillars } }
+ */
+router.post('/match', async (req, res) => {
+  try {
+    const { personA, personB } = req.body;
+
+    if (!personA || !personB || !personA.name || !personB.name || !personA.pillars || !personB.pillars) {
+      return res.status(400).json({ error: 'Missing required fields: personA and personB with name and pillars.' });
+    }
+
+    const apiKey = process.env.DEEPSEEK_API_KEY || 'sk-7b904305eb6c413eb04a3bfb0ae5805d';
+
+    const prompt = `你是一位精通八字合婚的命理大师。请分析以下两人的八字配对：
+
+${personA.name}（${personA.gender}）：
+年柱：${personA.pillars.year.stem.chinese}${personA.pillars.year.branch.chinese} | 月柱：${personA.pillars.month.stem.chinese}${personA.pillars.month.branch.chinese} | 日柱：${personA.pillars.day.stem.chinese}${personA.pillars.day.branch.chinese} | 时柱：${personA.pillars.hour.stem.chinese}${personA.pillars.hour.branch.chinese}
+
+${personB.name}（${personB.gender}）：
+年柱：${personB.pillars.year.stem.chinese}${personB.pillars.year.branch.chinese} | 月柱：${personB.pillars.month.stem.chinese}${personB.pillars.month.branch.chinese} | 日柱：${personB.pillars.day.stem.chinese}${personB.pillars.day.branch.chinese} | 时柱：${personB.pillars.hour.stem.chinese}${personB.pillars.hour.branch.chinese}
+
+请从以下几个维度进行详细分析，并给出综合评分（0-100分）：
+
+## 综合评分
+给出一个0-100的数字评分，并用一句话总结两人缘分。格式必须是：**评分：XX分** 开头。
+
+## 五行相生相克
+分析两人五行的相互关系，是相生还是相克，对感情的影响。
+
+## 性格契合度
+根据各自日主分析两人性格，是否互补，相处模式如何。
+
+## 感情与婚姻
+两人在感情和婚姻方面的缘分深浅，以及需要注意的问题。
+
+## 事业与财运
+两人合作或共同生活在事业财运方面的影响。
+
+## 相处建议
+给出具体可行的相处建议，帮助两人扬长避短。
+
+语言生动准确，直接称呼两人姓名。`;
+
+    // Set up SSE headers
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+    res.setHeader('X-Accel-Buffering', 'no');
+    res.flushHeaders();
+
+    // Call DeepSeek API with streaming
+    const deepseekResponse = await fetch('https://api.deepseek.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        model: 'deepseek-chat',
+        messages: [
+          {
+            role: 'user',
+            content: prompt,
+          },
+        ],
+        stream: true,
+        max_tokens: 1500,
+        temperature: 0.8,
+      }),
+    });
+
+    if (!deepseekResponse.ok) {
+      const errorText = await deepseekResponse.text();
+      console.error('[/match] DeepSeek API error:', deepseekResponse.status, errorText);
+      res.write(`data: ${JSON.stringify({ error: `AI service error: ${deepseekResponse.status}` })}\n\n`);
+      res.end();
+      return;
+    }
+
+    // Stream the response back to the client as SSE
+    const body = deepseekResponse.body;
+    let buffer = '';
+
+    body.on('data', (chunk) => {
+      buffer += chunk.toString('utf8');
+      const lines = buffer.split('\n');
+      buffer = lines.pop(); // Keep incomplete line in buffer
+
+      for (const line of lines) {
+        const trimmed = line.trim();
+        if (!trimmed || trimmed === 'data: [DONE]') {
+          if (trimmed === 'data: [DONE]') {
+            res.write('data: [DONE]\n\n');
+          }
+          continue;
+        }
+        if (trimmed.startsWith('data: ')) {
+          try {
+            const jsonStr = trimmed.slice(6);
+            const parsed = JSON.parse(jsonStr);
+            const delta = parsed.choices?.[0]?.delta?.content;
+            if (delta) {
+              res.write(`data: ${JSON.stringify({ content: delta })}\n\n`);
+            }
+          } catch (parseErr) {
+            // Ignore parse errors for malformed chunks
+          }
+        }
+      }
+    });
+
+    body.on('end', () => {
+      res.write('data: [DONE]\n\n');
+      res.end();
+    });
+
+    body.on('error', (streamErr) => {
+      console.error('[/match] Stream error:', streamErr);
+      res.write(`data: ${JSON.stringify({ error: 'Stream error from AI service.' })}\n\n`);
+      res.end();
+    });
+
+    // Handle client disconnect
+    req.on('close', () => {
+      body.destroy();
+    });
+
+  } catch (err) {
+    console.error('[/match] Error:', err);
+    if (!res.headersSent) {
+      res.status(500).json({ error: 'Internal server error during match analysis.' });
     } else {
       res.write(`data: ${JSON.stringify({ error: 'Internal server error.' })}\n\n`);
       res.end();
