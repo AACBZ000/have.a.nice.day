@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: destiny-pillars-backend
+    runtime: node
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: DEEPSEEK_API_KEY
+        sync: false
+      - key: PORT
+        value: 3001
+    plan: free
