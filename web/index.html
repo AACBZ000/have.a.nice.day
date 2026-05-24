@@ -1192,18 +1192,18 @@
 
     <!-- AI Interpretation -->
     <div class="interpretation-section">
-      <p class="section-label">Destiny Reading · 命運解讀</p>
+      <p class="section-label">命运解读</p>
 
       <div id="stream-loader" class="stream-loading">
         <div class="stream-ring"></div>
-        <p class="stream-msg">Reading the stars…</p>
-        <p class="stream-sub">Preparing your interpretation</p>
+        <p class="stream-msg">正在解读命盘…</p>
+        <p class="stream-sub">为您推算命运密码</p>
       </div>
 
       <div id="stream-error" class="error-card" style="display:none">
         <span class="error-icon">⚠</span>
-        <div class="error-title">Could not load interpretation</div>
-        <p class="error-text">Make sure the backend server is running and your API key is set.</p>
+        <div class="error-title">解读加载失败</div>
+        <p class="error-text">请稍后重试</p>
         <p class="error-detail" id="error-detail-text"></p>
       </div>
 
@@ -1211,21 +1211,21 @@
 
       <div id="streaming-indicator" class="streaming-indicator" style="display:none">
         <div class="stream-dot"></div>
-        <span>Receiving interpretation…</span>
+        <span>正在接收解读内容…</span>
       </div>
     </div>
 
     <!-- Bottom actions -->
     <div class="actions-row">
       <button class="action-share" onclick="shareReading()">
-        ↑&nbsp;&nbsp;Share Reading
+        ↑&nbsp;&nbsp;分享命盘
       </button>
       <button class="action-again" onclick="showForm()">
-        Calculate Again
+        重新测算
       </button>
     </div>
 
-    <p class="result-footer">Destiny Pillars · BaZi 八字</p>
+    <p class="result-footer">命运支柱 · 四柱命理 · 八字测算</p>
 
   </div><!-- /#result-view -->
 
@@ -1267,6 +1267,12 @@ const SECTION_ICONS = {
   'Health & Vitality':            '✦',
   'Lucky Elements':               '☆',
   'Lucky Elements & Colors':      '☆',
+  '命局总论':                      '◆',
+  '性格特质':                      '○',
+  '事业财运':                      '△',
+  '感情婚姻':                      '♡',
+  '健康养生':                      '✦',
+  '用神喜忌':                      '☆',
 };
 
 const MONTHS = [
@@ -1309,11 +1315,11 @@ function setCalendarMode(mode) {
   if (mode === 'lunar') {
     lunarNote.classList.add('visible');
     leapWrap.classList.add('visible');
-    dobLabel.textContent = 'Lunar date of birth (农历)';
+    dobLabel.textContent = '出生日期（农历）';
   } else {
     lunarNote.classList.remove('visible');
     leapWrap.classList.remove('visible');
-    dobLabel.textContent = 'Date of birth';
+    dobLabel.textContent = '出生日期';
   }
 
   // Rebuild month options for lunar mode (same 1–12 months, labelled differently)
@@ -1325,17 +1331,17 @@ function rebuildMonthOptions(mode) {
   const prev  = sel.value;
 
   const solarLabels = [
-    'January','February','March','April','May','June',
-    'July','August','September','October','November','December'
+    '1月','2月','3月','4月','5月','6月',
+    '7月','8月','9月','10月','11月','12月'
   ];
   const lunarLabels = [
-    '正月 (1st)','二月 (2nd)','三月 (3rd)','四月 (4th)',
-    '五月 (5th)','六月 (6th)','七月 (7th)','八月 (8th)',
-    '九月 (9th)','十月 (10th)','十一月 (11th)','十二月 (12th)'
+    '正月','二月','三月','四月',
+    '五月','六月','七月','八月',
+    '九月','十月','十一月','十二月'
   ];
 
   const labels = mode === 'lunar' ? lunarLabels : solarLabels;
-  sel.innerHTML = `<option value="">Month</option>`;
+  sel.innerHTML = `<option value="">月</option>`;
   labels.forEach((label, i) => {
     const opt = document.createElement('option');
     opt.value = i + 1;
@@ -1416,7 +1422,7 @@ function buildYearOptions() {
 
 function buildDayOptions() {
   const sel = document.getElementById('birth-day');
-  sel.innerHTML = '<option value="">Day</option>';
+  sel.innerHTML = '<option value="">日</option>';
   for (let d = 1; d <= 31; d++) {
     const opt = document.createElement('option');
     opt.value = d;
@@ -1443,7 +1449,7 @@ function updateDayOptions() {
     maxDay = 30;
   }
 
-  sel.innerHTML = '<option value="">Day</option>';
+  sel.innerHTML = '<option value="">日</option>';
   for (let d = 1; d <= maxDay; d++) {
     const opt = document.createElement('option');
     opt.value = d;
@@ -1497,9 +1503,9 @@ async function handleSubmit() {
   const hourVal  = document.getElementById('birth-hour').value;
   const birthHourSlot = hourVal !== '' ? parseInt(hourVal, 10) : 0;
 
-  if (!name)                                  { showToast('Please enter your name.'); return; }
-  if (!birthYear || !birthMonth || !birthDay) { showToast('Please select your complete date of birth.'); return; }
-  if (!selectedGender)                        { showToast('Please select your gender.'); return; }
+  if (!name)                                  { showToast('请输入您的姓名。'); return; }
+  if (!birthYear || !birthMonth || !birthDay) { showToast('请选择完整的出生日期。'); return; }
+  if (!selectedGender)                        { showToast('请选择性别。'); return; }
 
   // Lunar conversion
   if (calendarMode === 'lunar') {
@@ -1529,7 +1535,7 @@ async function handleSubmit() {
     showResult(chartData);
   } catch (err) {
     showView('form-view');
-    showToast(`Connection error: ${err.message}`, 5000);
+    showToast(`连接错误：${err.message}`, 5000);
   }
 }
 
@@ -1542,7 +1548,7 @@ function showResult(data) {
   // Person header
   document.getElementById('result-name').textContent = name;
   document.getElementById('result-meta').textContent =
-    `${formatBirthDate(birthDate)}  ·  ${gender}`;
+    `${formatBirthDate(birthDate)}  ·  ${translateGender(gender)}`;
 
   // BaZi chart
   renderBaziChart(pillars);
@@ -1569,10 +1575,10 @@ function renderBaziChart(pillars) {
   const container = document.getElementById('bazi-chart-container');
 
   const cols = [
-    { key: 'year',  labelEn: 'YEAR',  labelCn: '年柱', isDay: false },
-    { key: 'month', labelEn: 'MONTH', labelCn: '月柱', isDay: false },
-    { key: 'day',   labelEn: 'DAY',   labelCn: '日柱', isDay: true  },
-    { key: 'hour',  labelEn: 'HOUR',  labelCn: '時柱', isDay: false },
+    { key: 'year',  labelEn: '年柱', labelCn: '', isDay: false },
+    { key: 'month', labelEn: '月柱', labelCn: '', isDay: false },
+    { key: 'day',   labelEn: '日柱', labelCn: '', isDay: true  },
+    { key: 'hour',  labelEn: '时柱', labelCn: '', isDay: false },
   ];
 
   // Build header row
@@ -1580,8 +1586,7 @@ function renderBaziChart(pillars) {
     <th>
       <div class="bazi-col-header ${isDay ? 'is-day' : ''}">
         <span class="col-label-en">${labelEn}</span>
-        <span class="col-label-cn">${labelCn}</span>
-        ${isDay ? '<span class="col-self-tag">Self</span>' : ''}
+        ${isDay ? '<span class="col-self-tag">日主</span>' : ''}
       </div>
     </th>
   `).join('');
@@ -1596,8 +1601,8 @@ function renderBaziChart(pillars) {
         <div class="bazi-cell ${isDay ? 'is-day' : ''}">
           <span class="char-main" style="color:${color}">${s.chinese}</span>
           <span class="char-name" style="color:${color}88">${s.english}</span>
-          <span class="char-element" style="color:${color};background:${bg}">${s.element}</span>
-          <span class="char-polarity">${s.polarity}</span>
+          <span class="char-element" style="color:${color};background:${bg}">${translateElement(s.element)}</span>
+          <span class="char-polarity">${translatePolarity(s.polarity)}</span>
         </div>
       </td>
     `;
@@ -1613,8 +1618,8 @@ function renderBaziChart(pillars) {
         <div class="bazi-cell ${isDay ? 'is-day' : ''}">
           <span class="char-main" style="color:${color}">${b.chinese}</span>
           <span class="char-name" style="color:${color}88">${b.english}</span>
-          <span class="char-element" style="color:${color};background:${bg}">${b.element}</span>
-          <span class="char-polarity">${b.polarity}</span>
+          <span class="char-element" style="color:${color};background:${bg}">${translateElement(b.element)}</span>
+          <span class="char-polarity">${translatePolarity(b.polarity)}</span>
         </div>
       </td>
     `;
@@ -1624,7 +1629,7 @@ function renderBaziChart(pillars) {
   const legendHtml = Object.entries(ELEMENT_COLORS).map(([el, color]) => `
     <div class="legend-item">
       <div class="legend-dot" style="background:${color}"></div>
-      <span class="legend-label">${el}</span>
+      <span class="legend-label">${translateElement(el)}</span>
     </div>
   `).join('');
 
@@ -1641,14 +1646,12 @@ function renderBaziChart(pillars) {
       <tbody>
         <tr>
           <td class="bazi-row-label">
-            <span class="row-label-en">Stem</span>
             <span class="row-label-cn">天干</span>
           </td>
           ${stemCells}
         </tr>
         <tr>
           <td class="bazi-row-label">
-            <span class="row-label-en">Branch</span>
             <span class="row-label-cn">地支</span>
           </td>
           ${branchCells}
@@ -1674,7 +1677,7 @@ function renderElementSummary(elementSummary) {
     const pct   = Math.round((count / total) * 100);
     return `
       <div class="elem-bar-row">
-        <span class="elem-bar-label" style="color:${color}">${el}</span>
+        <span class="elem-bar-label" style="color:${color}">${translateElement(el)}</span>
         <div class="elem-bar-bg">
           <div class="elem-bar-fill" style="background:${color};width:${pct}%"></div>
         </div>
@@ -1688,14 +1691,14 @@ function renderElementSummary(elementSummary) {
 
   container.style.display = 'block';
   container.innerHTML = `
-    <p class="section-label" style="margin-bottom:14px">Element Balance</p>
+    <p class="section-label" style="margin-bottom:14px">五行分析</p>
     <div class="elem-bars">${barsHtml}</div>
     <div class="elem-tags">
       <span class="elem-tag" style="color:${domColor};border-color:${domColor}44;background:${ELEMENT_BG[dominant]}">
-        Dominant · ${dominant}
+        旺：${translateElement(dominant)}
       </span>
       <span class="elem-tag" style="color:${weakColor};border-color:${weakColor}44;background:${ELEMENT_BG[weakest]}">
-        Weakest · ${weakest}
+        弱：${translateElement(weakest)}
       </span>
     </div>
   `;
@@ -1866,12 +1869,31 @@ function escapeHtml(str) {
 }
 
 /* ============================================================
+   TRANSLATION HELPERS
+============================================================ */
+const ELEMENT_CN = { Wood: '木', Fire: '火', Earth: '土', Metal: '金', Water: '水' };
+const POLARITY_CN = { Yang: '阳', Yin: '阴' };
+const GENDER_CN = { Male: '男', Female: '女' };
+
+function translateElement(el) {
+  return ELEMENT_CN[el] || el;
+}
+
+function translatePolarity(p) {
+  return POLARITY_CN[p] || p;
+}
+
+function translateGender(g) {
+  return GENDER_CN[g] || g;
+}
+
+/* ============================================================
    UTILITIES
 ============================================================ */
 function formatBirthDate(dateStr) {
   if (!dateStr) return '';
   const [y, m, d] = dateStr.split('-').map(Number);
-  return `${MONTHS[m - 1]} ${d}, ${y}`;
+  return `${y}年${m}月${d}日`;
 }
 
 /* ============================================================
@@ -1883,30 +1905,30 @@ async function shareReading() {
   const p = pillars;
 
   const shareText = [
-    'My Destiny Pillars Reading',
+    '我的命运支柱八字命盘',
     '',
-    `Name: ${name}`,
-    `Birth Date: ${formatBirthDate(birthDate)}`,
-    `Gender: ${gender}`,
+    `姓名：${name}`,
+    `出生日期：${formatBirthDate(birthDate)}`,
+    `性别：${translateGender(gender)}`,
     '',
-    'Four Pillars (BaZi 八字):',
-    `Year:  ${p.year.stem.chinese}${p.year.branch.chinese}  (${p.year.stem.element} ${p.year.branch.english})`,
-    `Month: ${p.month.stem.chinese}${p.month.branch.chinese}  (${p.month.stem.element} ${p.month.branch.english})`,
-    `Day:   ${p.day.stem.chinese}${p.day.branch.chinese}  (${p.day.stem.element} ${p.day.branch.english})`,
-    `Hour:  ${p.hour.stem.chinese}${p.hour.branch.chinese}  (${p.hour.stem.element} ${p.hour.branch.english})`,
+    '四柱八字：',
+    `年柱：${p.year.stem.chinese}${p.year.branch.chinese}  (${translateElement(p.year.stem.element)} ${p.year.branch.english})`,
+    `月柱：${p.month.stem.chinese}${p.month.branch.chinese}  (${translateElement(p.month.stem.element)} ${p.month.branch.english})`,
+    `日柱：${p.day.stem.chinese}${p.day.branch.chinese}  (${translateElement(p.day.stem.element)} ${p.day.branch.english})`,
+    `时柱：${p.hour.stem.chinese}${p.hour.branch.chinese}  (${translateElement(p.hour.stem.element)} ${p.hour.branch.english})`,
     '',
-    'Revealed by Destiny Pillars',
+    '——命运支柱 · 四柱命理',
   ].join('\n');
 
   try {
     if (navigator.share) {
-      await navigator.share({ title: 'My Destiny Pillars Reading', text: shareText });
+      await navigator.share({ title: '我的八字命盘', text: shareText });
     } else {
       await navigator.clipboard.writeText(shareText);
-      showToast('Reading copied to clipboard');
+      showToast('命盘已复制到剪贴板');
     }
   } catch {
-    showToast('Could not share. Please copy the URL manually.');
+    showToast('分享失败，请手动复制链接。');
   }
 }
 </script>
