@@ -989,11 +989,200 @@
     }
 
     /* ============================================================
+       APP TABS
+    ============================================================ */
+    .app-tabs {
+      display: flex;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 4px;
+      margin-bottom: 24px;
+      gap: 3px;
+    }
+
+    .app-tab-btn {
+      flex: 1;
+      padding: 9px 12px;
+      border: none;
+      border-radius: var(--radius-md);
+      background: transparent;
+      color: var(--text-secondary);
+      font-family: var(--font-chinese);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+      text-align: center;
+    }
+
+    .app-tab-btn.active {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .app-tab-btn:hover:not(.active) {
+      color: var(--text-primary);
+      background: var(--surface-elevated);
+    }
+
+    /* ============================================================
+       MATCH TAB
+    ============================================================ */
+    #tab-match-content { display: none; }
+
+    .match-person-label {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 14px;
+    }
+
+    .match-divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 8px 0 16px;
+    }
+
+    .match-divider-line {
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .match-divider-icon {
+      font-size: 18px;
+      color: var(--text-muted);
+      line-height: 1;
+    }
+
+    /* Mini bazi chart for match results */
+    .mini-bazi-pair {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .mini-bazi-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 14px;
+    }
+
+    .mini-bazi-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 10px;
+      text-align: center;
+      font-family: var(--font-chinese);
+    }
+
+    .mini-pillars {
+      display: flex;
+      justify-content: space-around;
+      gap: 4px;
+    }
+
+    .mini-pillar {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .mini-pillar-label {
+      font-size: 9px;
+      color: var(--text-muted);
+      font-family: var(--font-chinese);
+    }
+
+    .mini-pillar-char {
+      font-family: var(--font-chinese);
+      font-size: 18px;
+      line-height: 1;
+    }
+
+    /* Score display */
+    .match-score-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 24px;
+      margin-bottom: 16px;
+      text-align: center;
+      animation: fadeSlideIn 0.4s ease both;
+    }
+
+    .score-label {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    .score-arc-wrap {
+      position: relative;
+      width: 120px;
+      height: 120px;
+      margin: 0 auto 16px;
+    }
+
+    .score-arc-wrap svg {
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+    }
+
+    .score-arc-bg {
+      fill: none;
+      stroke: var(--border);
+      stroke-width: 8;
+    }
+
+    .score-arc-fill {
+      fill: none;
+      stroke-width: 8;
+      stroke-linecap: round;
+      transition: stroke-dasharray 1.2s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    .score-number {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 36px;
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      color: var(--text-primary);
+      line-height: 1;
+    }
+
+    .score-subtitle {
+      font-size: 14px;
+      color: var(--text-secondary);
+      font-family: var(--font-chinese);
+      line-height: 1.5;
+    }
+
+    /* Match result container */
+    #match-result-view { display: none; }
+
+    /* ============================================================
        RESPONSIVE
     ============================================================ */
     @media (max-width: 380px) {
       .char-main { font-size: 22px; }
       .card { padding: 18px 16px; }
+      .mini-bazi-pair { grid-template-columns: 1fr; }
     }
 
     @media (min-width: 640px) {
@@ -1024,6 +1213,17 @@
       <span class="header-title">命运支柱</span>
       <span class="header-subtitle">四柱命理 · 洞见天机</span>
     </header>
+
+    <!-- App-level tabs -->
+    <div class="app-tabs" role="tablist">
+      <button class="app-tab-btn active" id="app-tab-reading" role="tab" onclick="switchAppTab('reading')">命盘测算</button>
+      <button class="app-tab-btn" id="app-tab-match" role="tab" onclick="switchAppTab('match')">合婚配对</button>
+    </div>
+
+    <!-- ============================================================
+         READING TAB CONTENT
+    ============================================================ -->
+    <div id="tab-reading-content">
 
     <!-- Form card -->
     <div class="card">
@@ -1143,6 +1343,259 @@
     <p class="footer-note">
       命运支柱 · 四柱命理 · 八字测算
     </p>
+
+    </div><!-- /#tab-reading-content -->
+
+
+    <!-- ============================================================
+         MATCH TAB CONTENT
+    ============================================================ -->
+    <div id="tab-match-content">
+
+      <!-- Match form card -->
+      <div class="card">
+
+        <!-- Person A -->
+        <p class="match-person-label">甲方 · Person A</p>
+
+        <!-- Person A calendar toggle -->
+        <div class="calendar-toggle" role="group" aria-label="甲方历法选择">
+          <button class="cal-tab active" id="ma-tab-solar" onclick="setMatchCalMode('a','solar')">
+            <span class="cal-label-cn">阳历</span>
+          </button>
+          <button class="cal-tab" id="ma-tab-lunar" onclick="setMatchCalMode('a','lunar')">
+            <span class="cal-label-cn">农历</span>
+          </button>
+        </div>
+
+        <div class="lunar-note" id="ma-lunar-note">
+          <span class="lunar-note-icon">ℹ</span>
+          <span>农历日期将自动换算为阳历进行测算。</span>
+        </div>
+
+        <!-- Person A name -->
+        <div class="field-group">
+          <label class="field-label" for="ma-name">姓名</label>
+          <input type="text" id="ma-name" placeholder="请输入姓名" autocomplete="off" spellcheck="false" />
+        </div>
+
+        <!-- Person A date -->
+        <div class="field-group">
+          <label class="field-label" id="ma-dob-label">出生日期</label>
+          <div class="date-row">
+            <div class="select-wrap">
+              <select id="ma-month" aria-label="月" onchange="updateMatchDayOptions('a')">
+                <option value="">月</option>
+                <option value="1">1月</option><option value="2">2月</option><option value="3">3月</option>
+                <option value="4">4月</option><option value="5">5月</option><option value="6">6月</option>
+                <option value="7">7月</option><option value="8">8月</option><option value="9">9月</option>
+                <option value="10">10月</option><option value="11">11月</option><option value="12">12月</option>
+              </select>
+            </div>
+            <div class="select-wrap">
+              <select id="ma-day" aria-label="日"></select>
+            </div>
+            <div class="select-wrap">
+              <select id="ma-year" aria-label="年" onchange="updateMatchDayOptions('a')"></select>
+            </div>
+          </div>
+          <div class="leap-month-wrap" id="ma-leap-wrap">
+            <input type="checkbox" class="leap-checkbox" id="ma-leap-check" />
+            <label class="leap-label" for="ma-leap-check"><span class="cn">闰月</span></label>
+          </div>
+        </div>
+
+        <!-- Person A hour -->
+        <div class="field-group">
+          <label class="field-label" for="ma-hour">出生时辰</label>
+          <div class="select-wrap">
+            <select id="ma-hour">
+              <option value="">请选择时辰（可选）</option>
+              <option value="0">子时 (23:00-1:00) · 鼠</option>
+              <option value="1">丑时 (1:00-3:00) · 牛</option>
+              <option value="2">寅时 (3:00-5:00) · 虎</option>
+              <option value="3">卯时 (5:00-7:00) · 兔</option>
+              <option value="4">辰时 (7:00-9:00) · 龙</option>
+              <option value="5">巳时 (9:00-11:00) · 蛇</option>
+              <option value="6">午时 (11:00-13:00) · 马</option>
+              <option value="7">未时 (13:00-15:00) · 羊</option>
+              <option value="8">申时 (15:00-17:00) · 猴</option>
+              <option value="9">酉时 (17:00-19:00) · 鸡</option>
+              <option value="10">戌时 (19:00-21:00) · 狗</option>
+              <option value="11">亥时 (21:00-23:00) · 猪</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Person A gender -->
+        <div class="field-group" style="margin-bottom:0">
+          <label class="field-label">性别</label>
+          <div class="gender-row">
+            <button class="gender-btn" id="ma-btn-male" onclick="selectMatchGender('a','Male')">♂&nbsp;&nbsp;男</button>
+            <button class="gender-btn" id="ma-btn-female" onclick="selectMatchGender('a','Female')">♀&nbsp;&nbsp;女</button>
+          </div>
+        </div>
+
+      </div><!-- /.card person A -->
+
+      <!-- Divider -->
+      <div class="match-divider">
+        <div class="match-divider-line"></div>
+        <span class="match-divider-icon">♡</span>
+        <div class="match-divider-line"></div>
+      </div>
+
+      <!-- Person B card -->
+      <div class="card">
+
+        <p class="match-person-label">乙方 · Person B</p>
+
+        <!-- Person B calendar toggle -->
+        <div class="calendar-toggle" role="group" aria-label="乙方历法选择">
+          <button class="cal-tab active" id="mb-tab-solar" onclick="setMatchCalMode('b','solar')">
+            <span class="cal-label-cn">阳历</span>
+          </button>
+          <button class="cal-tab" id="mb-tab-lunar" onclick="setMatchCalMode('b','lunar')">
+            <span class="cal-label-cn">农历</span>
+          </button>
+        </div>
+
+        <div class="lunar-note" id="mb-lunar-note">
+          <span class="lunar-note-icon">ℹ</span>
+          <span>农历日期将自动换算为阳历进行测算。</span>
+        </div>
+
+        <!-- Person B name -->
+        <div class="field-group">
+          <label class="field-label" for="mb-name">姓名</label>
+          <input type="text" id="mb-name" placeholder="请输入姓名" autocomplete="off" spellcheck="false" />
+        </div>
+
+        <!-- Person B date -->
+        <div class="field-group">
+          <label class="field-label" id="mb-dob-label">出生日期</label>
+          <div class="date-row">
+            <div class="select-wrap">
+              <select id="mb-month" aria-label="月" onchange="updateMatchDayOptions('b')">
+                <option value="">月</option>
+                <option value="1">1月</option><option value="2">2月</option><option value="3">3月</option>
+                <option value="4">4月</option><option value="5">5月</option><option value="6">6月</option>
+                <option value="7">7月</option><option value="8">8月</option><option value="9">9月</option>
+                <option value="10">10月</option><option value="11">11月</option><option value="12">12月</option>
+              </select>
+            </div>
+            <div class="select-wrap">
+              <select id="mb-day" aria-label="日"></select>
+            </div>
+            <div class="select-wrap">
+              <select id="mb-year" aria-label="年" onchange="updateMatchDayOptions('b')"></select>
+            </div>
+          </div>
+          <div class="leap-month-wrap" id="mb-leap-wrap">
+            <input type="checkbox" class="leap-checkbox" id="mb-leap-check" />
+            <label class="leap-label" for="mb-leap-check"><span class="cn">闰月</span></label>
+          </div>
+        </div>
+
+        <!-- Person B hour -->
+        <div class="field-group">
+          <label class="field-label" for="mb-hour">出生时辰</label>
+          <div class="select-wrap">
+            <select id="mb-hour">
+              <option value="">请选择时辰（可选）</option>
+              <option value="0">子时 (23:00-1:00) · 鼠</option>
+              <option value="1">丑时 (1:00-3:00) · 牛</option>
+              <option value="2">寅时 (3:00-5:00) · 虎</option>
+              <option value="3">卯时 (5:00-7:00) · 兔</option>
+              <option value="4">辰时 (7:00-9:00) · 龙</option>
+              <option value="5">巳时 (9:00-11:00) · 蛇</option>
+              <option value="6">午时 (11:00-13:00) · 马</option>
+              <option value="7">未时 (13:00-15:00) · 羊</option>
+              <option value="8">申时 (15:00-17:00) · 猴</option>
+              <option value="9">酉时 (17:00-19:00) · 鸡</option>
+              <option value="10">戌时 (19:00-21:00) · 狗</option>
+              <option value="11">亥时 (21:00-23:00) · 猪</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Person B gender -->
+        <div class="field-group" style="margin-bottom:0">
+          <label class="field-label">性别</label>
+          <div class="gender-row">
+            <button class="gender-btn" id="mb-btn-male" onclick="selectMatchGender('b','Male')">♂&nbsp;&nbsp;男</button>
+            <button class="gender-btn" id="mb-btn-female" onclick="selectMatchGender('b','Female')">♀&nbsp;&nbsp;女</button>
+          </div>
+        </div>
+
+      </div><!-- /.card person B -->
+
+      <!-- CTA -->
+      <button class="cta-btn" id="match-submit-btn" onclick="calculateMatch()">
+        测算合婚
+      </button>
+
+      <p class="footer-note">命运支柱 · 合婚配对 · 八字合婚</p>
+
+      <!-- ============================================================
+           MATCH RESULT (shown after calculation)
+      ============================================================ -->
+      <div id="match-result-view">
+
+        <!-- Mini BaZi pair -->
+        <div class="mini-bazi-pair" id="match-mini-charts"></div>
+
+        <!-- Score card -->
+        <div class="match-score-card" id="match-score-card" style="display:none">
+          <p class="score-label">合婚综合评分</p>
+          <div class="score-arc-wrap">
+            <svg viewBox="0 0 120 120">
+              <circle class="score-arc-bg" cx="60" cy="60" r="50"/>
+              <circle class="score-arc-fill" id="score-arc-fill" cx="60" cy="60" r="50"
+                stroke-dasharray="0 314" stroke-dashoffset="0"/>
+            </svg>
+            <div class="score-number" id="score-number">—</div>
+          </div>
+          <p class="score-subtitle" id="score-subtitle"></p>
+        </div>
+
+        <!-- AI Analysis sections -->
+        <div class="interpretation-section">
+          <p class="section-label">合婚分析</p>
+
+          <div id="match-stream-loader" class="stream-loading">
+            <div class="stream-ring"></div>
+            <p class="stream-msg">正在分析八字合婚…</p>
+            <p class="stream-sub">为您推算姻缘密码</p>
+          </div>
+
+          <div id="match-stream-error" class="error-card" style="display:none">
+            <span class="error-icon">⚠</span>
+            <div class="error-title">分析加载失败</div>
+            <p class="error-text">请稍后重试</p>
+            <p class="error-detail" id="match-error-detail"></p>
+          </div>
+
+          <div id="match-sections-container"></div>
+
+          <div id="match-streaming-indicator" class="streaming-indicator" style="display:none">
+            <div class="stream-dot"></div>
+            <span>正在接收合婚分析…</span>
+          </div>
+        </div>
+
+        <!-- Re-calculate -->
+        <div style="margin-top:24px;margin-bottom:24px">
+          <button class="action-again" style="width:100%" onclick="resetMatch()">
+            重新测算
+          </button>
+        </div>
+
+        <p class="result-footer">命运支柱 · 合婚配对 · 八字合婚</p>
+
+      </div><!-- /#match-result-view -->
+
+    </div><!-- /#tab-match-content -->
 
   </div><!-- /#form-view -->
 
@@ -1297,6 +1750,7 @@ document.addEventListener('DOMContentLoaded', () => {
   buildDayOptions();
   document.getElementById('birth-month').addEventListener('change', updateDayOptions);
   document.getElementById('birth-year').addEventListener('change', updateDayOptions);
+  initMatch();
 });
 
 /* ============================================================
@@ -1931,6 +2385,429 @@ async function shareReading() {
     showToast('分享失败，请手动复制链接。');
   }
 }
+
+/* ================================================================
+   APP TAB SWITCHING
+================================================================ */
+function switchAppTab(tab) {
+  const isReading = tab === 'reading';
+  document.getElementById('app-tab-reading').classList.toggle('active', isReading);
+  document.getElementById('app-tab-match').classList.toggle('active', !isReading);
+  document.getElementById('tab-reading-content').style.display = isReading ? 'block' : 'none';
+  document.getElementById('tab-match-content').style.display   = isReading ? 'none' : 'block';
+}
+
+/* ================================================================
+   MATCH STATE
+================================================================ */
+let matchCalModeA  = 'solar';
+let matchCalModeB  = 'solar';
+let matchGenderA   = null;
+let matchGenderB   = null;
+let matchAbort     = null;
+
+/* ================================================================
+   MATCH INIT (called on DOMContentLoaded)
+================================================================ */
+function initMatch() {
+  buildMatchYearOptions('a');
+  buildMatchYearOptions('b');
+  buildMatchDayOptions('a');
+  buildMatchDayOptions('b');
+}
+
+function buildMatchYearOptions(person) {
+  const sel = document.getElementById(`m${person}-year`);
+  const currentYear = new Date().getFullYear();
+  sel.innerHTML = '<option value="">年</option>';
+  for (let y = currentYear; y >= 1920; y--) {
+    const opt = document.createElement('option');
+    opt.value = y;
+    opt.textContent = y;
+    sel.appendChild(opt);
+  }
+}
+
+function buildMatchDayOptions(person) {
+  const sel = document.getElementById(`m${person}-day`);
+  sel.innerHTML = '<option value="">日</option>';
+  for (let d = 1; d <= 31; d++) {
+    const opt = document.createElement('option');
+    opt.value = d;
+    opt.textContent = d;
+    sel.appendChild(opt);
+  }
+}
+
+function updateMatchDayOptions(person) {
+  const month = parseInt(document.getElementById(`m${person}-month`).value, 10);
+  const year  = parseInt(document.getElementById(`m${person}-year`).value, 10);
+  const sel   = document.getElementById(`m${person}-day`);
+  const prev  = parseInt(sel.value, 10);
+  const mode  = person === 'a' ? matchCalModeA : matchCalModeB;
+
+  let maxDay = 31;
+  if (mode === 'solar') {
+    if (month && year) {
+      maxDay = new Date(year, month, 0).getDate();
+    } else if (month) {
+      const daysInMonth = [31,29,31,30,31,30,31,31,30,31,30,31];
+      maxDay = daysInMonth[month - 1];
+    }
+  } else {
+    maxDay = 30;
+  }
+
+  sel.innerHTML = '<option value="">日</option>';
+  for (let d = 1; d <= maxDay; d++) {
+    const opt = document.createElement('option');
+    opt.value = d;
+    opt.textContent = d;
+    if (d === prev) opt.selected = true;
+    sel.appendChild(opt);
+  }
+}
+
+function setMatchCalMode(person, mode) {
+  if (person === 'a') matchCalModeA = mode;
+  else matchCalModeB = mode;
+
+  document.getElementById(`m${person}-tab-solar`).classList.toggle('active', mode === 'solar');
+  document.getElementById(`m${person}-tab-lunar`).classList.toggle('active', mode === 'lunar');
+
+  const lunarNote = document.getElementById(`m${person}-lunar-note`);
+  const leapWrap  = document.getElementById(`m${person}-leap-wrap`);
+  const dobLabel  = document.getElementById(`m${person}-dob-label`);
+
+  if (mode === 'lunar') {
+    lunarNote.classList.add('visible');
+    leapWrap.classList.add('visible');
+    dobLabel.textContent = '出生日期（农历）';
+  } else {
+    lunarNote.classList.remove('visible');
+    leapWrap.classList.remove('visible');
+    dobLabel.textContent = '出生日期';
+  }
+
+  rebuildMatchMonthOptions(person, mode);
+}
+
+function rebuildMatchMonthOptions(person, mode) {
+  const sel  = document.getElementById(`m${person}-month`);
+  const prev = sel.value;
+
+  const solarLabels = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+  const lunarLabels = ['正月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月'];
+  const labels = mode === 'lunar' ? lunarLabels : solarLabels;
+
+  sel.innerHTML = '<option value="">月</option>';
+  labels.forEach((label, i) => {
+    const opt = document.createElement('option');
+    opt.value = i + 1;
+    opt.textContent = label;
+    if (String(i + 1) === prev) opt.selected = true;
+    sel.appendChild(opt);
+  });
+}
+
+function selectMatchGender(person, g) {
+  if (person === 'a') matchGenderA = g;
+  else matchGenderB = g;
+
+  document.getElementById(`m${person}-btn-male`).classList.toggle('active', g === 'Male');
+  document.getElementById(`m${person}-btn-female`).classList.toggle('active', g === 'Female');
+}
+
+/* ================================================================
+   MATCH CALCULATE
+================================================================ */
+async function calculateMatch() {
+  // Gather Person A
+  const nameA   = document.getElementById('ma-name').value.trim();
+  let monthA    = parseInt(document.getElementById('ma-month').value, 10) || null;
+  let dayA      = parseInt(document.getElementById('ma-day').value, 10) || null;
+  let yearA     = parseInt(document.getElementById('ma-year').value, 10) || null;
+  const hourValA = document.getElementById('ma-hour').value;
+  const hourSlotA = hourValA !== '' ? parseInt(hourValA, 10) : 0;
+
+  // Gather Person B
+  const nameB   = document.getElementById('mb-name').value.trim();
+  let monthB    = parseInt(document.getElementById('mb-month').value, 10) || null;
+  let dayB      = parseInt(document.getElementById('mb-day').value, 10) || null;
+  let yearB     = parseInt(document.getElementById('mb-year').value, 10) || null;
+  const hourValB = document.getElementById('mb-hour').value;
+  const hourSlotB = hourValB !== '' ? parseInt(hourValB, 10) : 0;
+
+  // Validate
+  if (!nameA)                               { showToast('请输入甲方姓名。'); return; }
+  if (!yearA || !monthA || !dayA)           { showToast('请选择甲方完整出生日期。'); return; }
+  if (!matchGenderA)                        { showToast('请选择甲方性别。'); return; }
+  if (!nameB)                               { showToast('请输入乙方姓名。'); return; }
+  if (!yearB || !monthB || !dayB)           { showToast('请选择乙方完整出生日期。'); return; }
+  if (!matchGenderB)                        { showToast('请选择乙方性别。'); return; }
+
+  // Lunar conversion
+  if (matchCalModeA === 'lunar') {
+    const isLeap = document.getElementById('ma-leap-check').checked;
+    const solar  = lunarToSolar(yearA, monthA, dayA, isLeap);
+    yearA = solar.year; monthA = solar.month; dayA = solar.day;
+  }
+  if (matchCalModeB === 'lunar') {
+    const isLeap = document.getElementById('mb-leap-check').checked;
+    const solar  = lunarToSolar(yearB, monthB, dayB, isLeap);
+    yearB = solar.year; monthB = solar.month; dayB = solar.day;
+  }
+
+  // Disable button
+  const btn = document.getElementById('match-submit-btn');
+  btn.disabled = true;
+  btn.textContent = '测算中…';
+
+  // Reset result area
+  document.getElementById('match-result-view').style.display = 'none';
+  document.getElementById('match-mini-charts').innerHTML = '';
+  document.getElementById('match-score-card').style.display = 'none';
+  document.getElementById('score-number').textContent = '—';
+  document.getElementById('score-subtitle').textContent = '';
+  document.getElementById('match-sections-container').innerHTML = '';
+  document.getElementById('match-stream-loader').style.display = 'block';
+  document.getElementById('match-stream-error').style.display  = 'none';
+  document.getElementById('match-streaming-indicator').style.display = 'none';
+
+  try {
+    // Calculate both charts
+    const [resA, resB] = await Promise.all([
+      fetch(`${BACKEND_URL}/api/bazi/calculate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: nameA, birthYear: yearA, birthMonth: monthA, birthDay: dayA, birthHourSlot: hourSlotA, gender: matchGenderA }),
+      }),
+      fetch(`${BACKEND_URL}/api/bazi/calculate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: nameB, birthYear: yearB, birthMonth: monthB, birthDay: dayB, birthHourSlot: hourSlotB, gender: matchGenderB }),
+      }),
+    ]);
+
+    if (!resA.ok || !resB.ok) {
+      const errBody = await (!resA.ok ? resA : resB).json().catch(() => ({}));
+      throw new Error(errBody.error || '计算八字时出错');
+    }
+
+    const chartA = await resA.json();
+    const chartB = await resB.json();
+
+    // Show result section
+    document.getElementById('match-result-view').style.display = 'block';
+
+    // Render mini charts
+    renderMiniCharts(chartA, chartB);
+
+    // Scroll to results
+    document.getElementById('match-result-view').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    // Start streaming match analysis
+    startMatchStreaming(chartA, chartB);
+
+  } catch (err) {
+    showToast(`错误：${err.message}`, 5000);
+    document.getElementById('match-stream-loader').style.display = 'none';
+    document.getElementById('match-stream-error').style.display  = 'block';
+    document.getElementById('match-error-detail').textContent    = err.message;
+    document.getElementById('match-result-view').style.display   = 'block';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '测算合婚';
+  }
+}
+
+/* ================================================================
+   MINI CHART RENDERER
+================================================================ */
+function renderMiniCharts(chartA, chartB) {
+  const container = document.getElementById('match-mini-charts');
+  container.innerHTML = [chartA, chartB].map(chart => {
+    const p = chart.pillars;
+    const cols = [
+      { label: '年', stem: p.year.stem, branch: p.year.branch },
+      { label: '月', stem: p.month.stem, branch: p.month.branch },
+      { label: '日', stem: p.day.stem,   branch: p.day.branch   },
+      { label: '时', stem: p.hour.stem,  branch: p.hour.branch  },
+    ];
+    const pillarsHtml = cols.map(col => {
+      const sc = ELEMENT_COLORS[col.stem.element]   || '#8B8B9A';
+      const bc = ELEMENT_COLORS[col.branch.element] || '#8B8B9A';
+      return `
+        <div class="mini-pillar">
+          <span class="mini-pillar-label">${col.label}</span>
+          <span class="mini-pillar-char" style="color:${sc}">${col.stem.chinese}</span>
+          <span class="mini-pillar-char" style="color:${bc}">${col.branch.chinese}</span>
+        </div>
+      `;
+    }).join('');
+
+    return `
+      <div class="mini-bazi-card">
+        <div class="mini-bazi-name">${escapeHtml(chart.name)}</div>
+        <div class="mini-pillars">${pillarsHtml}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+/* ================================================================
+   MATCH STREAMING
+================================================================ */
+function startMatchStreaming(chartA, chartB) {
+  let matchStreamText = '';
+  let scoreExtracted  = false;
+  let renderedHeadings = new Set();
+
+  const controller = new AbortController();
+  matchAbort       = controller;
+
+  const sectionsEl  = document.getElementById('match-sections-container');
+  const loaderEl    = document.getElementById('match-stream-loader');
+  const errorEl     = document.getElementById('match-stream-error');
+  const indicatorEl = document.getElementById('match-streaming-indicator');
+
+  function tryExtractScore(text) {
+    if (scoreExtracted) return;
+    const m = text.match(/评分[：:]\s*(\d{1,3})\s*分/);
+    if (m) {
+      const score = Math.min(100, Math.max(0, parseInt(m[1], 10)));
+      scoreExtracted = true;
+      displayScore(score, text);
+    }
+  }
+
+  function onChunk(chunk) {
+    matchStreamText += chunk;
+    loaderEl.style.display    = 'none';
+    indicatorEl.style.display = 'flex';
+
+    tryExtractScore(matchStreamText);
+
+    const sections = parseMarkdownSections(matchStreamText);
+    const toRender = sections.length > 1 ? sections.slice(0, -1) : [];
+    toRender.forEach(sec => {
+      if (sec.heading !== '综合评分' && !renderedHeadings.has(sec.heading)) {
+        renderedHeadings.add(sec.heading);
+        appendSection(sec, sectionsEl);
+      }
+    });
+  }
+
+  function onDone() {
+    matchAbort = null;
+    loaderEl.style.display    = 'none';
+    indicatorEl.style.display = 'none';
+
+    tryExtractScore(matchStreamText);
+
+    const sections = parseMarkdownSections(matchStreamText);
+    sections.forEach(sec => {
+      if (sec.heading !== '综合评分' && !renderedHeadings.has(sec.heading)) {
+        renderedHeadings.add(sec.heading);
+        appendSection(sec, sectionsEl);
+      }
+    });
+  }
+
+  function onError(err) {
+    matchAbort = null;
+    loaderEl.style.display    = 'none';
+    indicatorEl.style.display = 'none';
+    errorEl.style.display     = 'block';
+    document.getElementById('match-error-detail').textContent = err.message;
+  }
+
+  (async () => {
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/bazi/match`, {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          personA: { name: chartA.name, gender: chartA.gender, pillars: chartA.pillars },
+          personB: { name: chartB.name, gender: chartB.gender, pillars: chartB.pillars },
+        }),
+        signal: controller.signal,
+      });
+
+      if (!response.ok) {
+        const body = await response.json().catch(() => ({}));
+        throw new Error(body.error || `Server error: ${response.status}`);
+      }
+
+      const reader  = response.body.getReader();
+      const decoder = new TextDecoder('utf-8');
+      let   buffer  = '';
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop();
+
+        for (const line of lines) {
+          const trimmed = line.trim();
+          if (!trimmed) continue;
+          if (trimmed === 'data: [DONE]') { onDone(); return; }
+          if (trimmed.startsWith('data: ')) {
+            try {
+              const payload = JSON.parse(trimmed.slice(6));
+              if (payload.error)   { onError(new Error(payload.error)); return; }
+              if (payload.content) onChunk(payload.content);
+            } catch { /* skip malformed */ }
+          }
+        }
+      }
+      onDone();
+    } catch (err) {
+      if (err.name === 'AbortError') return;
+      onError(err);
+    }
+  })();
+}
+
+/* ================================================================
+   SCORE DISPLAY
+================================================================ */
+function displayScore(score, fullText) {
+  const card = document.getElementById('match-score-card');
+  card.style.display = 'block';
+
+  // Number
+  document.getElementById('score-number').textContent = score;
+
+  // Arc
+  const circumference = 2 * Math.PI * 50; // r=50
+  const fill = (score / 100) * circumference;
+  const arcEl = document.getElementById('score-arc-fill');
+  const color = score > 75 ? '#4CAF88' : score >= 50 ? '#D4913A' : '#E05252';
+  arcEl.style.stroke = color;
+  arcEl.setAttribute('stroke-dasharray', `${fill} ${circumference - fill}`);
+  document.getElementById('score-number').style.color = color;
+
+  // Subtitle: extract the sentence summary from first section text
+  const summaryMatch = fullText.match(/\*\*评分[：:]\d+分\*\*\s*(.+?)(?:\n|$)/);
+  if (summaryMatch) {
+    document.getElementById('score-subtitle').textContent = summaryMatch[1].trim();
+  }
+}
+
+/* ================================================================
+   RESET MATCH
+================================================================ */
+function resetMatch() {
+  if (matchAbort) { matchAbort.abort(); matchAbort = null; }
+  document.getElementById('match-result-view').style.display = 'none';
+  document.getElementById('match-sections-container').innerHTML = '';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
 </script>
 </body>
 </html>
