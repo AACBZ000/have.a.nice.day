@@ -69,10 +69,7 @@ router.post('/interpret', async (req, res) => {
       return res.status(400).json({ error: 'Missing required fields: name, pillars' });
     }
 
-    const apiKey = process.env.DEEPSEEK_API_KEY;
-    if (!apiKey) {
-      return res.status(500).json({ error: 'DeepSeek API key not configured on server.' });
-    }
+    const apiKey = process.env.DEEPSEEK_API_KEY || 'sk-7b904305eb6c413eb04a3bfb0ae5805d';
 
     const { year, month, day, hour } = pillars;
 
